@@ -1,0 +1,15 @@
+[
+  {
+    "firstName": "Testine",
+    "middleName": null,
+    "lastName": "Testen",
+    "fullName": "Testine Testen",
+    "username": "01016101",
+    "personalIdNumber": "01016145048",
+    "mobilePhone": null,
+    "mail": "Testine.Testen@t-fk.no",
+    "privateMail": "Geir.Gasodden@t-fk.no",
+    "department": "SKIVS",
+    "organizationNumber": "974568039"
+  }
+]

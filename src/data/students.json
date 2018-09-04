@@ -1,0 +1,22 @@
+[
+  {
+    "firstName": "Helge",
+    "middleName": null,
+    "lastName": "Grim",
+    "fullName": "Helge Grim",
+    "personalIdNumber": "02059711111",
+    "mobilePhone": "+4748300000",
+    "mail": null,
+    "userName": "0903grim"
+  },
+  {
+    "firstName": "Halgrim",
+    "middleName": null,
+    "lastName": "Durk",
+    "fullName": "Halgrim Durk",
+    "personalIdNumber": "02059711112",
+    "mobilePhone": "+4748300000",
+    "mail": "halgrim.durk@hotmail.com",
+    "userName": "1010halg"
+  }
+ ]
