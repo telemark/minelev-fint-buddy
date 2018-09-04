@@ -5,7 +5,7 @@
 
 API mimicking the buddy api for FINT
 
-### Example result from ```/users/{username}/search/{search}```.
+### Example result from ```/users/{username}/search/{search}```
 
 Returns students and which classes the teacher (username) has a relation to.
 ```js
