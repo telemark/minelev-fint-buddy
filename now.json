@@ -1,0 +1,11 @@
+{
+  "name": "minelev-fint-buddy",
+  "alias": [
+    "fint.minelev.no"
+  ],
+  "type": "docker",
+  "dotenv": "production.env",
+  "features": {
+    "cloud": "v2"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "minelev-fint-buddy",
+  "description": "API mimicking the buddy api for FINT",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "author": {
+    "name": "Geir Gåsodden",
+    "email": "geir.gasodden@pythonia.no",
+    "url": "https://github.com/zrrrzzt"
+  },
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=10.9.0"
+  },
+  "scripts": {
+    "test": "standard && npm audit && ava",
+    "test-offline": "standard && ava",
+    "coverage": "nyc ava",
+    "coveralls": "nyc ava && nyc report --reporter=lcov && cat coverage/lcov.info | coveralls",
+    "standard-fix": "standard --fix",
+    "start": "micro",
+    "dev": "micro-dev -H localhost",
+    "deploy": "npm test && now && now alias",
+    "refresh": "rm -rf node_modules && rm package-lock.json && npm install"
+  },
+  "keywords": [
+    "microservice",
+    "micro",
+    "MinElev",
+    "FINT",
+    "buddy",
+    "Telemark fylkeskommune"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/telemark/minelev-fint-buddy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/telemark/minelev-fint-buddy/issues"
+  },
+  "homepage": "https://github.com/telemark/minelev-fint-buddy#readme",
+  "devDependencies": {
+    "axios": "0.18.0",
+    "ava": "0.25.0",
+    "coveralls": "3.0.2",
+    "micro-dev": "3.0.0",
+    "nyc": "13.0.1",
+    "standard": "12.0.1",
+    "test-listen": "1.1.0"
+  },
+  "dependencies": {
+    "cors": "2.8.4",
+    "express-jwt": "5.3.1",
+    "finalhandler": "1.1.1",
+    "markdown-it": "8.4.2",
+    "micro": "9.3.3",
+    "mongojs": "2.6.0",
+    "router": "1.3.3",
+    "winston": "2.4.4",
+    "winston-papertrail": "1.0.5"
+  }
+}
