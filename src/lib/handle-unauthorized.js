@@ -6,4 +6,5 @@ module.exports = (error, request, response, next) => {
     logger('error', ['handle-unauthorized', error])
     send(response, 401, { error: 'invalid token' })
   }
+  next()
 }
