@@ -26,6 +26,7 @@ router.get('/groups/:groupId/students', routes.students)
 router.get('/users/:username/contactClasses', routes.contactClasses)
 router.get('/users/:username/contactTeachers', routes.contactTeachers)
 router.get('/teachers/all', routes.teachers)
+router.get('/test', routes.test)
 
 module.exports = (request, response) => {
   router(request, response, finalhandler(request, response))
