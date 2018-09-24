@@ -1,29 +1,16 @@
-const getToken = require('fint-get-token')
-const getData = require('fint-get-data')
-const axios = require('axios')
+const getToken = require('./get-token')
+const getData = require('./get-data')
 const logger = require('./logger')
+const config = require('../config')
 
 module.exports = async () => {
-  const options = {
-    url: '***REMOVED***',
-    credentials: {
-      client: {
-        client_id: '***REMOVED***',
-        client_secret: '***REMOVED***'
-      },
-      auth: {
-        username: '***REMOVED***',
-        password: '***REMOVED***',
-        grant_type: 'password',
-        scope: 'fint-client'
-      }
-    }
-    
-  }
+  const options = config.fint
+
   try {
     const { access_token: token, expires_in: expires } = await getToken(options)
     return {
       getToken: () => token,
+      getData: url => getData(url, token, options.orgId),
       getExpiration: () => expires,
       refreshToken: () => logger('info', ['token', 'refreshed'])
     }
