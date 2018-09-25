@@ -1,5 +1,6 @@
 const axios = require('axios')
 const { stringify } = require('querystring')
+const logger = require('./logger')
 
 module.exports = async options => {
   if (!options) {
@@ -37,6 +38,6 @@ module.exports = async options => {
     const { data } = await axios.post(url, payload)
     return data
   } catch (error) {
-    throw error
+    logger('error', ['getToken', error])
   }
 }

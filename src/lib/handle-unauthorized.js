@@ -8,5 +8,4 @@ module.exports = (error, request, response, next) => {
   } else {
     next()
   }
-  
 }
