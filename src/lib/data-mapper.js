@@ -23,8 +23,8 @@ exports.StudentGroup = async (elev, person, skole, groups) => {
 exports.Group = async (skole, group) => {
   const data = [
     {
-      id: group.what, //what is this?
-      description: group.what, //what is this?
+      id: group.what, // what is this?
+      description: group.what, // what is this?
       unitId: skole.systemId.identifikatorverdi,
       unitName: skole.organisasjonsnavn,
       organizationNumber: skole.organisasjonsnummer.identifikatorverdi,
@@ -35,12 +35,10 @@ exports.Group = async (skole, group) => {
 }
 
 exports.Student = (elev, person) => {
-    
-    const username = null
-    if(elev.brukernavn){
-        username = elev.brukernavn.identifikatorverdi // currently missing? can I assume it exists?
-    }
-    
+  let username = null
+  if (elev.brukernavn) {
+    username = elev.brukernavn.identifikatorverdi // currently missing? can I assume it exists?
+  }
 
   const data = {
     firstName: person.navn.fornavn,
