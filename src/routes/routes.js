@@ -1,6 +1,6 @@
 const { readFile } = require('fs').promises
 const md = require('markdown-it')()
-const { send, sendError, createError } = require('micro')
+const { send, sendError } = require('micro')
 const logger = require('../lib/logger')
 
 const fint = require('../lib/fint-client')
@@ -26,28 +26,26 @@ exports.student = async (request, response) => {
   try {
     const fintInstance = await fint()
 
-    const personalressurs = await fintInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username) 
+    const personalressurs = await fintInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
     const skoleressurs = await fintInstance.getData(dM.skoleressursUrl(personalressurs))
     const undervisningsforhold = await fintInstance.getData(dM.undervisningsforholdUrl(skoleressurs))
 
-    const elevforhold = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elevforhold/systemid/' + id) //using systemid
+    const elevforhold = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elevforhold/systemid/' + id) // using systemid
     // const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username) using elevnummer
     // const elevforhold = await fintInstance.getData(dM.elevforholdUrl(elev))
 
     const teacherGroups = await dM.allGroupUrls(undervisningsforhold)
     const studentGroups = await dM.allGroupUrls(elevforhold)
-    
+
     if (studentGroups.some(v => teacherGroups.includes(v))) {
       const skole = await fintInstance.getData(dM.skoleUrl(elevforhold))
       const elev = await fintInstance.getData(dM.elevUrl(elevforhold))
       const person = await fintInstance.getData(dM.personUrl(elev))
 
-      send(response, 200, await dM.StudentGroup(elev, person, skole, groups))
-
+      send(response, 200, await dM.StudentGroup(elev, person, skole))
     } else {
       send(response, 404, 'the student id is not related to the teacher')
     }
-
   } catch (error) {
     sendError(request, response, error)
   }
@@ -77,7 +75,6 @@ exports.students = async (request, response) => {
   }
 }
 
-
 exports.contactClasses = async (request, response) => {
   const { username } = request.params
   logger('info', ['routes', 'contactClasses', 'username', username])
@@ -88,12 +85,11 @@ exports.contactClasses = async (request, response) => {
     const skoleressurs = await fintInstance.getData(dM.skoleressursUrl(personalressurs))
     const undervisningsforhold = await fintInstance.getData(dM.undervisningsforholdUrl(skoleressurs))
 
-    const promises = dM.contactGroupsUrls(undervisningsforhold).map( contactGroupUrl => {
+    const promises = dM.contactGroupsUrls(undervisningsforhold).map(contactGroupUrl => {
       return new Promise(async (resolve, reject) => {
         const contactGroup = await fintInstance.getData(contactGroupUrl)
         resolve(dM.contactClass(contactGroup))
       })
-      
     })
 
     Promise.all(promises).then((contactGroups) => send(response, 200, contactGroups))
@@ -111,23 +107,22 @@ exports.contactTeachers = async (request, response) => {
     const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username)
     const elevforhold = await fintInstance.getData(dM.elevforholdUrl(elev))
 
-    const promises = dM.contactGroupsUrls(elevforhold).map( contactGroupUrl => {
+    const promises = dM.contactGroupsUrls(elevforhold).map(contactGroupUrl => {
       return new Promise(async (resolve, reject) => {
         const contactGroup = await fintInstance.getData(contactGroupUrl)
 
-        const nestedPromises = dM.undervisningsforholdUrls(contactGroup).map( undervisningsforholdUrl => {
+        const nestedPromises = dM.undervisningsforholdUrls(contactGroup).map(undervisningsforholdUrl => {
           return new Promise(async (resolve, reject) => {
             const undervisningsforhold = await fintInstance.getData(undervisningsforholdUrl)
             const skoleressurs = await fintInstance.getData(dM.skoleressursUrl(undervisningsforhold))
-            const personalressurs = await fintInstance.getData(dM.personalressursUrl(skoleressurs)) //returns 404
+            const personalressurs = await fintInstance.getData(dM.personalressursUrl(skoleressurs)) // returns 404
 
             resolve(dM.contactTeacher(personalressurs, contactGroup))
           })
         })
-        
+
         Promise.all(nestedPromises).then((contactTeachers) => resolve(contactTeachers))
       })
-      
     })
     Promise.all(promises).then((contactTeachers) => send(response, 200, contactTeachers))
   } catch (error) {

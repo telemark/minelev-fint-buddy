@@ -35,7 +35,6 @@ exports.Group = (skole, group) => {
 }
 
 exports.Student = (elev, person) => {
-
   const data = {
     firstName: person.navn.fornavn,
     middleName: person.navn.mellomnavn || null,
@@ -69,13 +68,13 @@ exports.Teacher = (personalressurs, person, skole) => {
 }
 
 exports.contactTeacher = (personalressurs, contactGroup) => {
-  const data = 
+  const data =
     {
       username: personalressurs.brukernavn.identifikatorverdi,
       groupId: contactGroup.systemId.identifikatorverdi, // what id
       mail: personalressurs.kontaktinformasjon.epostadresse
     }
-  
+
   return data
 }
 
@@ -84,24 +83,24 @@ exports.contactClass = contactClass => {
     {
       id: contactClass.navn // or contactClass.systemId.identifikatorverdi
     }
-  
+
   return contactClassId
 }
 
 exports.allGroupUrls = forhold => {
   const Urls = []
   if (forhold._links.kontaktlarergruppe) {
-    for (const kontaktlarergruppe of group._links.kontaktlarergruppe) {
+    for (const kontaktlarergruppe of forhold._links.kontaktlarergruppe) {
       Urls.push(kontaktlarergruppe.href)
     }
   }
   if (forhold._links.basisgruppe) {
-    for (const basisgruppe of group._links.basisgruppe) {
+    for (const basisgruppe of forhold._links.basisgruppe) {
       Urls.push(basisgruppe.href)
     }
   }
   if (forhold._links.undervisningsgruppe) {
-    for (const undervisningsgruppe of group._links.undervisningsgruppe) {
+    for (const undervisningsgruppe of forhold._links.undervisningsgruppe) {
       Urls.push(undervisningsgruppe.href)
     }
   }

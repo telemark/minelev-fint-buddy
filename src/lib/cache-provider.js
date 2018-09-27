@@ -1,10 +1,10 @@
-const nodeCache = require('node-cache')
+const NodeCache = require('node-cache')
 let cache = null
 
 exports.start = (done) => {
-    if (cache) return done()
+  if (cache) return done()
 
-    cache = new nodeCache({ stdTTL: 3600, checkperiod: 120 })
+  cache = new NodeCache({ stdTTL: 3600, checkperiod: 120 })
 }
 
 exports.instance = () => cache
