@@ -1,6 +1,7 @@
 const axios = require('axios').create()
 const logger = require('./logger')
-// const axiosTiming = require('../dev-helpers/axios-timing')
+
+const cacheProvider = require('./cache-provider')
 
 module.exports = async (url, token, orgId) => {
   if (!url) {
@@ -21,9 +22,17 @@ module.exports = async (url, token, orgId) => {
     }
   }
   try {
-    const { data } = await axios.get(url, config)
-    const entries = data && data._embedded && data._embedded._entries ? data._embedded._entries : data
-    // axiosTiming(axios, console.log) //logs individual request times
+    
+    let entries = await cacheProvider.instance().get(url)
+    
+    if ( entries == undefined ){
+      const { data } = await axios.get(url, config)
+      entries = data && data._embedded && data._embedded._entries ? data._embedded._entries : data
+
+      cacheProvider.instance().set(url, entries)
+    }
+    
+
     return entries
   } catch (error) {
     logger('error', ['getData', error])

@@ -20,7 +20,7 @@ exports.StudentGroup = async (elev, person, skole, groups) => {
   return data
 }
 
-exports.Group = async (skole, group) => {
+exports.Group = (skole, group) => {
   const data = [
     {
       id: group.what, // what is this?
@@ -35,10 +35,6 @@ exports.Group = async (skole, group) => {
 }
 
 exports.Student = (elev, person) => {
-  let username = null
-  if (elev.brukernavn) {
-    username = elev.brukernavn.identifikatorverdi // currently missing? can I assume it exists?
-  }
 
   const data = {
     firstName: person.navn.fornavn,
@@ -48,7 +44,7 @@ exports.Student = (elev, person) => {
     personalIdNumber: person.fodselsnummer.identifikatorverdi,
     mobilePhone: person.kontaktinformasjon.mobiltelefonnummer || null,
     mail: person.kontaktinformasjon.epostadresse || null,
-    userName: username
+    userName: null
   }
   return data
 }
@@ -73,23 +69,43 @@ exports.Teacher = (personalressurs, person, skole) => {
 }
 
 exports.contactTeacher = (personalressurs, contactGroup) => {
-  const data = [
+  const data = 
     {
       username: personalressurs.brukernavn.identifikatorverdi,
       groupId: contactGroup.systemId.identifikatorverdi, // what id
       mail: personalressurs.kontaktinformasjon.epostadresse
     }
-  ]
+  
   return data
 }
 
 exports.contactClass = contactClass => {
-  const contactClassId = [
+  const contactClassId =
     {
-      firstName: contactClass.navn // or contactClass.systemId.identifikatorverdi
+      id: contactClass.navn // or contactClass.systemId.identifikatorverdi
     }
-  ]
+  
   return contactClassId
+}
+
+exports.allGroupUrls = forhold => {
+  const Urls = []
+  if (forhold._links.kontaktlarergruppe) {
+    for (const kontaktlarergruppe of group._links.kontaktlarergruppe) {
+      Urls.push(kontaktlarergruppe.href)
+    }
+  }
+  if (forhold._links.basisgruppe) {
+    for (const basisgruppe of group._links.basisgruppe) {
+      Urls.push(basisgruppe.href)
+    }
+  }
+  if (forhold._links.undervisningsgruppe) {
+    for (const undervisningsgruppe of group._links.undervisningsgruppe) {
+      Urls.push(undervisningsgruppe.href)
+    }
+  }
+  return Urls
 }
 
 exports.personUrl = elev => {
@@ -111,15 +127,14 @@ exports.memberUrls = group => {
   }
   return memberUrls
 }
-exports.groups = elevforhold => {
-  return elevforhold._links.medlemskap
-}
-
 exports.skoleressursUrl = personalressurs => {
   return personalressurs._links.skoleressurs[0].href
 }
 exports.undervisningsforholdUrl = skoleressurs => {
   return skoleressurs._links.undervisningsforhold[0].href
+}
+exports.personalressursUrl = skoleressurs => {
+  return skoleressurs._links.personalressurs[0].href
 }
 exports.undervisningsforholdUrls = group => {
   const undervisningsforholdUrls = []
