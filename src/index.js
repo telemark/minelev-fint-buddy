@@ -5,9 +5,13 @@ const cors = require('cors')
 const jwt = require('express-jwt')
 
 // Utilities
-const routes = require('./lib/routes')
+const routes = require('./routes/routes')
 const handleUnauthorized = require('./lib/handle-unauthorized')
 const config = require('./config')
+const cacheProvider = require('./lib/cache-provider')
+
+// Initialize cache
+cacheProvider.start()
 
 // Initialize a new router
 const router = Router()
