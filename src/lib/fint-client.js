@@ -20,7 +20,6 @@ module.exports = async () => {
     orgId: process.env.FINT_ORG_ID
   }
 
-
   try {
     const { access_token: token, expires_in: expires } = await getToken(options)
     return {
