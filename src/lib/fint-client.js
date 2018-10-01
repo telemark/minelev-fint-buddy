@@ -1,23 +1,24 @@
 const getToken = require('./get-token')
 const getData = require('./get-data')
 const logger = require('./logger')
+const config = require('../config')
 
 module.exports = async () => {
   const options = {
-    url: process.env.FINT_AUTH_URL,
+    url: config.FINT_AUTH_URL,
     credentials: {
       client: {
-        client_id: process.env.FINT_CLIENT_ID,
-        client_secret: process.env.FINT_CLIENT_SECRET
+        client_id: config.FINT_CLIENT_ID,
+        client_secret: config.FINT_CLIENT_SECRET
       },
       auth: {
-        username: process.env.FINT_AUTH_USERNAME,
-        password: process.env.FINT_AUTH_PASSWORD,
+        username: config.FINT_AUTH_USERNAME,
+        password: config.FINT_AUTH_PASSWORD,
         grant_type: 'password',
         scope: 'fint-client'
       }
     },
-    orgId: process.env.FINT_ORG_ID
+    orgId: config.FINT_ORG_ID
   }
 
   try {
