@@ -5,10 +5,24 @@
 
 API mimicking the buddy api for FINT
 
+## setup
+
+config [production.env](production.env) for your environment
+
+```bash
+JWT_SECRET=secret-for-accessing-this-api
+FINT_AUTH_URL=fint-auth-url
+FINT_CLIENT_ID=fint-client-id
+FINT_CLIENT_SECRET=fint-client-secret
+FINT_AUTH_USERNAME=fint-client-username
+FINT_AUTH_PASSWORD=fint-client-password
+FINT_ORG_ID=organization-for-fint-access
+```
+
 ### Example result from ```/users/{username}/search/{search}```
 
 Returns students and which classes the teacher (username) has a relation to.
-```js
+```JavaScript
 [
  {
     "firstName": "Helga",
@@ -66,7 +80,7 @@ Returns students and which classes the teacher (username) has a relation to.
 ### Example results from ```/users/{username}/students/{id}```
 
 Return given student that teacher has relation to.
-```js
+```JavaScript
 [
   {
     "firstName": "Helge Grim",
@@ -99,7 +113,7 @@ Return given student that teacher has relation to.
 ### Example results from ```/groups/{groupId}/students```
 
 Return students in given group
-```js
+```JavaScript
 [
   {
     "firstName": "Helge",
@@ -127,7 +141,7 @@ Return students in given group
 ### Example results from ```/users/{username}/contactClasses```
 
 Return a teachers contact classes
-```js
+```JavaScript
 [
   {
     "Id": "KRAVS:2REA"
@@ -138,7 +152,7 @@ Return a teachers contact classes
 ### Example results from ```/users/{username}/contactTeachers```
 
 Return given students contact teachers
-```js
+```JavaScript
 [
   {
     "username": "jantejante",
@@ -153,7 +167,7 @@ Return given students contact teachers
 Returns all teachers
 
 
-```js
+```JavaScript
 [
   {
     "firstName": "Testine",
@@ -170,6 +184,11 @@ Returns all teachers
   }
 ]
 ```
+
+## Related
+
+- [buddy-minelev-api](https://github.com/telemark/buddy-minelev-api) The original MinElev Buddy API
+- [FINT](https://www.fintprosjektet.no) The FINT project
 
 ## License
 
