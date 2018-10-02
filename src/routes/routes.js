@@ -32,12 +32,12 @@ exports.student = async (request, response) => {
 
     const elevforhold = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elevforhold/systemid/' + id) // using systemid
     // const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username) using elevnummer
-    // const elevforhold = await fintInstance.getData(dM.elevforholdUrl(elev))
+    // const elevforhold = await fintInstance.getData(dataMapper.elevforholdUrl(elev))
 
     const teacherGroups = dataMapper.allGroupUrls(undervisningsforhold)
     const studentGroups = dataMapper.allGroupUrls(elevforhold)
 
-    if (studentGroups.some(v => teacherGroups.includes(v))) {
+    if (studentGroups.some(studentGroup => teacherGroups.includes(studentGroup))) {
       const skole = await fintInstance.getData(dataMapper.skoleUrl(elevforhold))
       const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
       const person = await fintInstance.getData(dataMapper.personUrl(elev))
