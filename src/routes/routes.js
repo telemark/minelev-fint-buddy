@@ -34,15 +34,15 @@ exports.student = async (request, response) => {
     // const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username) using elevnummer
     // const elevforhold = await fintInstance.getData(dM.elevforholdUrl(elev))
 
-    const teacherGroups = await dataMapper.allGroupUrls(undervisningsforhold)
-    const studentGroups = await dataMapper.allGroupUrls(elevforhold)
+    const teacherGroups = dataMapper.allGroupUrls(undervisningsforhold)
+    const studentGroups = dataMapper.allGroupUrls(elevforhold)
 
     if (studentGroups.some(v => teacherGroups.includes(v))) {
       const skole = await fintInstance.getData(dataMapper.skoleUrl(elevforhold))
       const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
       const person = await fintInstance.getData(dataMapper.personUrl(elev))
 
-      send(response, 200, await dataMapper.StudentGroup(elev, person, skole))
+      send(response, 200, dataMapper.studentGroup(elev, person, skole))
     } else {
       send(response, 404, 'the student id is not related to the teacher')
     }
@@ -59,17 +59,16 @@ exports.students = async (request, response) => {
     const fintInstance = await fint()
 
     const group = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/basisgruppe/systemid/' + groupId)
-
     let promises = dataMapper.memberUrls(group).map(elevforholdUrl => {
       return new Promise(async (resolve, reject) => {
         const elevforhold = await fintInstance.getData(elevforholdUrl)
         const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
         const person = await fintInstance.getData(dataMapper.personUrl(elev))
-        resolve(dataMapper.Student(elev, person))
+        resolve(dataMapper.student(elev, person))
       })
     })
 
-    Promise.all(promises).then((students) => send(response, 200, students))
+    Promise.all(promises).then(students => send(response, 200, students))
   } catch (error) {
     sendError(request, response, error)
   }
@@ -92,7 +91,7 @@ exports.contactClasses = async (request, response) => {
       })
     })
 
-    Promise.all(promises).then((contactGroups) => send(response, 200, contactGroups))
+    Promise.all(promises).then(contactGroups => send(response, 200, contactGroups))
   } catch (error) {
     sendError(request, response, error)
   }
@@ -121,10 +120,10 @@ exports.contactTeachers = async (request, response) => {
           })
         })
 
-        Promise.all(nestedPromises).then((contactTeachers) => resolve(contactTeachers))
+        Promise.all(nestedPromises).then(contactTeachers => resolve(contactTeachers))
       })
     })
-    Promise.all(promises).then((contactTeachers) => send(response, 200, contactTeachers))
+    Promise.all(promises).then(contactTeachers => send(response, 200, contactTeachers))
   } catch (error) {
     sendError(request, response, error)
   }
@@ -144,11 +143,11 @@ exports.teachers = async (request, response) => {
         const person = await fintInstance.getData(dataMapper.personUrl(personalressurs))
         const skole = await fintInstance.getData(dataMapper.skoleUrl(skoleressurs))
 
-        resolve(dataMapper.Teacher(personalressurs, person, skole))
+        resolve(dataMapper.teacher(personalressurs, person, skole))
       })
     })
 
-    Promise.all(promises).then((teachers) => send(response, 200, teachers))
+    Promise.all(promises).then(teachers => send(response, 200, teachers))
   } catch (error) {
     sendError(request, response, error)
   }

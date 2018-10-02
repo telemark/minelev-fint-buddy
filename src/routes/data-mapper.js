@@ -1,4 +1,4 @@
-exports.StudentGroup = (elev, person, skole, groups) => (
+exports.studentGroup = (elev, person, skole, groups) => (
   [
     {
       firstName: person.navn.fornavn,
@@ -19,7 +19,7 @@ exports.StudentGroup = (elev, person, skole, groups) => (
   ]
 )
 
-exports.Group = (skole, group) => (
+exports.group = (skole, group) => (
   [
     {
       id: group.what, // what is this?
@@ -32,7 +32,7 @@ exports.Group = (skole, group) => (
   ]
 )
 
-exports.Student = (elev, person) => (
+exports.student = (elev, person) => (
   {
     firstName: person.navn.fornavn,
     middleName: person.navn.mellomnavn || null,
@@ -45,7 +45,7 @@ exports.Student = (elev, person) => (
   }
 )
 
-exports.Teacher = (personalressurs, person, skole) => (
+exports.teacher = (personalressurs, person, skole) => (
   [
     {
       firstName: person.navn.fornavn,
@@ -78,23 +78,22 @@ exports.contactClass = contactClass => (
 )
 
 exports.allGroupUrls = forhold => {
-  const urls = []
-  if (forhold._links.kontaktlarergruppe) {
-    for (const kontaktlarergruppe of forhold._links.kontaktlarergruppe) {
-      urls.push(kontaktlarergruppe.href)
-    }
+  try {
+    const kontaktlarergrupper = forhold._links.kontaktlarergruppe
+      ? forhold._links.kontaktlarergruppe.map(({ href }) => href)
+      : []
+
+    const basisgrupper = forhold._links.basisgruppe
+      ? forhold._links.basisgruppe.map(({ href }) => href)
+      : []
+    const undervisningsgrupper = forhold._links.undervisningsgruppe
+      ? forhold._links.undervisningsgruppe.map(({ href }) => href)
+      : []
+
+    return [ ...kontaktlarergrupper, ...basisgrupper, ...undervisningsgrupper ].filter(item => item)
+  } catch (e) {
+    return []
   }
-  if (forhold._links.basisgruppe) {
-    for (const basisgruppe of forhold._links.basisgruppe) {
-      urls.push(basisgruppe.href)
-    }
-  }
-  if (forhold._links.undervisningsgruppe) {
-    for (const undervisningsgruppe of forhold._links.undervisningsgruppe) {
-      urls.push(undervisningsgruppe.href)
-    }
-  }
-  return urls
 }
 
 exports.personUrl = elev => elev._links.person[0].href
@@ -106,11 +105,11 @@ exports.elevUrl = elevforhold => elevforhold._links.elev[0].href
 exports.skoleUrl = elevforhold => elevforhold._links.skole[0].href
 
 exports.memberUrls = group => {
-  const memberUrls = []
-  for (const member of group._links.elevforhold) {
-    memberUrls.push(member.href)
+  try {
+    return group._links.elevforhold.map(({ href }) => href)
+  } catch (e) {
+    return []
   }
-  return memberUrls
 }
 exports.skoleressursUrl = personalressurs => personalressurs._links.skoleressurs[0].href
 
@@ -119,17 +118,17 @@ exports.undervisningsforholdUrl = skoleressurs => skoleressurs._links.undervisni
 exports.personalressursUrl = skoleressurs => skoleressurs._links.personalressurs[0].href
 
 exports.undervisningsforholdUrls = group => {
-  const undervisningsforholdUrls = []
-  for (const undervisningsforhold of group._links.undervisningsforhold) {
-    undervisningsforholdUrls.push(undervisningsforhold.href)
+  try {
+    return group._links.undervisningsforhold.map(({ href }) => href)
+  } catch (e) {
+    return []
   }
-  return undervisningsforholdUrls
 }
 
 exports.contactGroupsUrls = forhold => {
-  const contactGroupsUrls = []
-  for (const group of forhold._links.kontaktlærergruppe) {
-    contactGroupsUrls.push(group.href)
+  try {
+    return forhold._links.kontaktlærergruppe.map(({ href }) => href)
+  } catch (e) {
+    return []
   }
-  return contactGroupsUrls
 }
