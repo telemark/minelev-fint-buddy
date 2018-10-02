@@ -59,16 +59,15 @@ exports.students = async (request, response) => {
     const fintInstance = await fint()
 
     const group = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/basisgruppe/systemid/' + groupId)
-    let promises = dataMapper.memberUrls(group).map(elevforholdUrl => {
-      return new Promise(async (resolve, reject) => {
-        const elevforhold = await fintInstance.getData(elevforholdUrl)
-        const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
-        const person = await fintInstance.getData(dataMapper.personUrl(elev))
-        resolve(dataMapper.student(elev, person))
-      })
+    const promises = dataMapper.memberUrls(group).map(async elevforholdUrl => {
+      const elevforhold = await fintInstance.getData(elevforholdUrl)
+      const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
+      const person = await fintInstance.getData(dataMapper.personUrl(elev))
+      return dataMapper.student(elev, person)
     })
 
-    Promise.all(promises).then(students => send(response, 200, students))
+    const students = await Promise.all(promises)
+    send(response, 200, students)
   } catch (error) {
     sendError(request, response, error)
   }
@@ -84,14 +83,13 @@ exports.contactClasses = async (request, response) => {
     const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(personalressurs))
     const undervisningsforhold = await fintInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
 
-    const promises = dataMapper.contactGroupsUrls(undervisningsforhold).map(contactGroupUrl => {
-      return new Promise(async (resolve, reject) => {
-        const contactGroup = await fintInstance.getData(contactGroupUrl)
-        resolve(dataMapper.contactClass(contactGroup))
-      })
+    const promises = dataMapper.contactGroupsUrls(undervisningsforhold).map(async contactGroupUrl => {
+      const contactGroup = await fintInstance.getData(contactGroupUrl)
+      return dataMapper.contactClass(contactGroup)
     })
 
-    Promise.all(promises).then(contactGroups => send(response, 200, contactGroups))
+    const contactGroups = await Promise.all(promises)
+    send(response, 200, contactGroups)
   } catch (error) {
     sendError(request, response, error)
   }
@@ -106,24 +104,22 @@ exports.contactTeachers = async (request, response) => {
     const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username)
     const elevforhold = await fintInstance.getData(dataMapper.elevforholdUrl(elev))
 
-    const promises = dataMapper.contactGroupsUrls(elevforhold).map(contactGroupUrl => {
-      return new Promise(async (resolve, reject) => {
-        const contactGroup = await fintInstance.getData(contactGroupUrl)
+    const promises = dataMapper.contactGroupsUrls(elevforhold).map(async contactGroupUrl => {
+      const contactGroup = await fintInstance.getData(contactGroupUrl)
 
-        const nestedPromises = dataMapper.undervisningsforholdUrls(contactGroup).map(undervisningsforholdUrl => {
-          return new Promise(async (resolve, reject) => {
-            const undervisningsforhold = await fintInstance.getData(undervisningsforholdUrl)
-            const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
-            const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
+      const nestedPromises = dataMapper.undervisningsforholdUrls(contactGroup).map(async undervisningsforholdUrl => {
+        const undervisningsforhold = await fintInstance.getData(undervisningsforholdUrl)
+        const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
+        const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
 
-            resolve(dataMapper.contactTeacher(personalressurs, contactGroup))
-          })
-        })
-
-        Promise.all(nestedPromises).then(contactTeachers => resolve(contactTeachers))
+        return dataMapper.contactTeacher(personalressurs, contactGroup)
       })
+
+      const contactTeachers = await Promise.all(nestedPromises)
+      return contactTeachers
     })
-    Promise.all(promises).then(contactTeachers => send(response, 200, contactTeachers))
+    const contactTeachers = await Promise.all(promises)
+    send(response, 200, contactTeachers)
   } catch (error) {
     sendError(request, response, error)
   }
@@ -136,18 +132,17 @@ exports.teachers = async (request, response) => {
 
     const undervisningsforholds = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/undervisningsforhold/')
 
-    let promises = undervisningsforholds.map(undervisningsforhold => {
-      return new Promise(async (resolve, reject) => {
-        const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
-        const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
-        const person = await fintInstance.getData(dataMapper.personUrl(personalressurs))
-        const skole = await fintInstance.getData(dataMapper.skoleUrl(skoleressurs))
+    const promises = undervisningsforholds.map(async undervisningsforhold => {
+      const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
+      const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
+      const person = await fintInstance.getData(dataMapper.personUrl(personalressurs))
+      const skole = await fintInstance.getData(dataMapper.skoleUrl(skoleressurs))
 
-        resolve(dataMapper.teacher(personalressurs, person, skole))
-      })
+      return dataMapper.teacher(personalressurs, person, skole)
     })
 
-    Promise.all(promises).then(teachers => send(response, 200, teachers))
+    const teachers = await Promise.all(promises)
+    send(response, 200, teachers)
   } catch (error) {
     sendError(request, response, error)
   }
