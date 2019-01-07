@@ -83,7 +83,7 @@ exports.contactClasses = async (request, response) => {
   try {
     const fintPersonalInstance = await fint(personalOptions)
     const fintSkoleInstance = await fint(skoleOptions)
-    const personalressurs = await fintPersonalInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
+    const personalressurs = await fintPersonalInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/brukernavn/' + username)
     const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(personalressurs))
     const undervisningsforhold = await fintSkoleInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
 
