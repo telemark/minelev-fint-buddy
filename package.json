@@ -9,7 +9,7 @@
     "email": "geir.gasodden@pythonia.no",
     "url": "https://github.com/zrrrzzt"
   },
-  "main": "src/index.js",
+  "main": "index.js",
   "engines": {
     "node": ">=10.11.0"
   },

@@ -2,7 +2,7 @@ const test = require('ava')
 const listen = require('test-listen')
 const axios = require('axios')
 const micro = require('micro')
-const srv = require('../src')
+const srv = require('../')
 
 const getUrl = fn => {
   const srv = micro(fn)
