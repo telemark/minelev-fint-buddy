@@ -1,6 +1,7 @@
-const { readFile } = require('fs').promises
+const { readFileSync } = require('fs')
 const md = require('markdown-it')()
 const { send, sendError } = require('micro')
+const { skoleOptions, personalOptions } = require('../config.js')
 const logger = require('../lib/logger')
 
 const fint = require('../lib/fint-client')
@@ -8,7 +9,7 @@ const dataMapper = require('./data-mapper')
 
 exports.frontpage = async (request, response) => {
   logger('info', ['routes', 'frontpage'])
-  const readme = await readFile('./README.md', 'utf-8')
+  const readme = readFileSync(`${__dirname}/README.md`, 'utf-8')
   send(response, 200, md.render(readme))
 }
 
@@ -24,13 +25,14 @@ exports.student = async (request, response) => {
   logger('info', ['routes', 'student', 'username', username, 'id', id])
 
   try {
-    const fintInstance = await fint()
+    const fintPersonalInstance = await fint(personalOptions)
+    const fintSkoleInstance = await fint(skoleOptions)
 
-    const personalressurs = await fintInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
-    const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(personalressurs))
-    const undervisningsforhold = await fintInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
+    const personalressurs = await fintPersonalInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
+    const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(personalressurs))
+    const undervisningsforhold = await fintSkoleInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
 
-    const elevforhold = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elevforhold/systemid/' + id) // using systemid
+    const elevforhold = await fintSkoleInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elevforhold/systemid/' + id) // using systemid
     // const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username) using elevnummer
     // const elevforhold = await fintInstance.getData(dataMapper.elevforholdUrl(elev))
 
@@ -38,9 +40,9 @@ exports.student = async (request, response) => {
     const studentGroups = dataMapper.allGroupUrls(elevforhold)
 
     if (studentGroups.some(studentGroup => teacherGroups.includes(studentGroup))) {
-      const skole = await fintInstance.getData(dataMapper.skoleUrl(elevforhold))
-      const elev = await fintInstance.getData(dataMapper.elevUrl(elevforhold))
-      const person = await fintInstance.getData(dataMapper.personUrl(elev))
+      const skole = await fintSkoleInstance.getData(dataMapper.skoleUrl(elevforhold))
+      const elev = await fintSkoleInstance.getData(dataMapper.elevUrl(elevforhold))
+      const person = await fintSkoleInstance.getData(dataMapper.personUrl(elev))
 
       send(response, 200, dataMapper.studentGroup(elev, person, skole))
     } else {
@@ -56,7 +58,7 @@ exports.students = async (request, response) => {
   logger('info', ['routes', 'students', 'groupId', groupId])
 
   try {
-    const fintInstance = await fint()
+    const fintInstance = await fint(skoleOptions)
 
     const group = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/basisgruppe/systemid/' + groupId)
     const promises = dataMapper.memberUrls(group).map(async elevforholdUrl => {
@@ -78,13 +80,14 @@ exports.contactClasses = async (request, response) => {
   logger('info', ['routes', 'contactClasses', 'username', username])
 
   try {
-    const fintInstance = await fint()
-    const personalressurs = await fintInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
-    const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(personalressurs))
-    const undervisningsforhold = await fintInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
+    const fintPersonalInstance = await fint(personalOptions)
+    const fintSkoleInstance = await fint(skoleOptions)
+    const personalressurs = await fintPersonalInstance.getData('https://beta.felleskomponent.no/administrasjon/personal/personalressurs/ansattnummer/' + username)
+    const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(personalressurs))
+    const undervisningsforhold = await fintSkoleInstance.getData(dataMapper.undervisningsforholdUrl(skoleressurs))
 
     const promises = dataMapper.contactGroupsUrls(undervisningsforhold).map(async contactGroupUrl => {
-      const contactGroup = await fintInstance.getData(contactGroupUrl)
+      const contactGroup = await fintSkoleInstance.getData(contactGroupUrl)
       return dataMapper.contactClass(contactGroup)
     })
 
@@ -99,18 +102,19 @@ exports.contactTeachers = async (request, response) => {
   const { username } = request.params
   logger('info', ['routes', 'contactTeachers', 'username', username])
   try {
-    const fintInstance = await fint()
+    const fintPersonalInstance = await fint(personalOptions)
+    const fintSkoleInstance = await fint(skoleOptions)
 
-    const elev = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username)
-    const elevforhold = await fintInstance.getData(dataMapper.elevforholdUrl(elev))
+    const elev = await fintSkoleInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/elevnummer/' + username)
+    const elevforhold = await fintSkoleInstance.getData(dataMapper.elevforholdUrl(elev))
 
     const promises = dataMapper.contactGroupsUrls(elevforhold).map(async contactGroupUrl => {
-      const contactGroup = await fintInstance.getData(contactGroupUrl)
+      const contactGroup = await fintSkoleInstance.getData(contactGroupUrl)
 
       const nestedPromises = dataMapper.undervisningsforholdUrls(contactGroup).map(async undervisningsforholdUrl => {
-        const undervisningsforhold = await fintInstance.getData(undervisningsforholdUrl)
-        const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
-        const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
+        const undervisningsforhold = await fintSkoleInstance.getData(undervisningsforholdUrl)
+        const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
+        const personalressurs = await fintPersonalInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
 
         return dataMapper.contactTeacher(personalressurs, contactGroup)
       })
@@ -128,15 +132,16 @@ exports.contactTeachers = async (request, response) => {
 exports.teachers = async (request, response) => {
   logger('info', ['routes', 'teachers'])
   try {
-    const fintInstance = await fint()
+    const fintPersonalInstance = await fint(personalOptions)
+    const fintSkoleInstance = await fint(skoleOptions)
 
-    const undervisningsforholds = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/undervisningsforhold/')
+    const undervisningsforholds = await fintSkoleInstance.getData('https://beta.felleskomponent.no/utdanning/elev/undervisningsforhold/')
 
     const promises = undervisningsforholds.map(async undervisningsforhold => {
-      const skoleressurs = await fintInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
-      const personalressurs = await fintInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
-      const person = await fintInstance.getData(dataMapper.personUrl(personalressurs))
-      const skole = await fintInstance.getData(dataMapper.skoleUrl(skoleressurs))
+      const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
+      const personalressurs = await fintPersonalInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
+      const person = await fintPersonalInstance.getData(dataMapper.personUrl(personalressurs))
+      const skole = await fintSkoleInstance.getData(dataMapper.skoleUrl(skoleressurs))
 
       return dataMapper.teacher(personalressurs, person, skole)
     })
