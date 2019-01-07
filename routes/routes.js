@@ -9,7 +9,8 @@ const dataMapper = require('./data-mapper')
 
 exports.frontpage = async (request, response) => {
   logger('info', ['routes', 'frontpage'])
-  const readme = readFileSync(`${__dirname}/README.md`, 'utf-8')
+  const readMePath = `${__dirname}/../README.md`
+  const readme = readFileSync(`${readMePath}`, 'utf-8')
   send(response, 200, md.render(readme))
 }
 
