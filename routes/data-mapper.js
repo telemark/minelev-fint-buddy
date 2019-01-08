@@ -127,7 +127,7 @@ exports.undervisningsforholdUrls = group => {
 
 exports.contactGroupsUrls = forhold => {
   try {
-    return forhold._links.kontaktlærergruppe.map(({ href }) => href)
+    return forhold._links.kontaktlarergruppe.map(({ href }) => href)
   } catch (e) {
     return []
   }

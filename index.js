@@ -7,7 +7,6 @@ const jwt = require('express-jwt')
 // Utilities
 const routes = require('./routes/routes')
 const handleUnauthorized = require('./lib/handle-unauthorized')
-const config = require('./config')
 const cacheProvider = require('./lib/cache-provider')
 
 // Initialize cache
@@ -20,7 +19,9 @@ const router = Router()
 router.use(cors())
 
 // JWT
-router.use(jwt({ secret: config.JWT_SECRET }).unless({ path: ['/'] }))
+if (process.env.JWT_SECRET) {
+  router.use(jwt({ secret: process.env.JWT_SECRET }).unless({ path: ['/'] }))
+}
 router.use(handleUnauthorized)
 
 router.get('/', routes.frontpage)
