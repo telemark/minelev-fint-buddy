@@ -3,7 +3,7 @@
 
 # minelev-fint-buddy
 
-API mimicking the buddy api for FINT
+API mimicking the buddy api for FINT with a few add ons
 
 ## setup
 
@@ -12,11 +12,16 @@ config [production.env](production.env) for your environment
 ```bash
 JWT_SECRET=secret-for-accessing-this-api
 FINT_AUTH_URL=fint-auth-url
-FINT_CLIENT_ID=fint-client-id
-FINT_CLIENT_SECRET=fint-client-secret
-FINT_AUTH_USERNAME=fint-client-username
-FINT_AUTH_PASSWORD=fint-client-password
-FINT_ORG_ID=organization-for-fint-access
+FINT_EXTENS_CLIENT_ID=fint-client-id-for-extens-client
+FINT_EXTENS_CLIENT_SECRET=fint-client-secret-for-extens-client
+FINT_EXTENS_AUTH_USERNAME=fint-client-username-for-extens-client
+FINT_EXTENS_AUTH_PASSWORD=fint-client-password-for-extens-client
+FINT_EXTENS_ORG_ID=organization-for-extens-fint-access
+FINT_VISMA_CLIENT_ID=fint-client-id-for-visma-client
+FINT_VISMA_CLIENT_SECRET=fint-client-secret-for-extens-client
+FINT_VISMA_AUTH_USERNAME=fint-client-username-for-visma-client
+FINT_VISMA_AUTH_PASSWORD=fint-client-password-for-visma-client
+FINT_VISMA_ORG_ID=organization-for-visma-fint-access
 ```
 
 ### Example result from ```/users/{username}/search/{search}```
