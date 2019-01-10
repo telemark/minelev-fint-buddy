@@ -34,16 +34,28 @@ exports.group = (skole, group) => (
 
 exports.student = (elev, person) => (
   {
-    firstName: person.navn.fornavn,
-    middleName: person.navn.mellomnavn || null,
-    lastName: person.navn.etternavn,
-    fullName: person.navn.fornavn + ' ' + person.navn.etternavn,
-    personalIdNumber: person.fodselsnummer.identifikatorverdi,
-    mobilePhone: person.kontaktinformasjon.mobiltelefonnummer || null,
-    mail: person.kontaktinformasjon.epostadresse || null,
-    userName: null
+    firstName: person ? person.navn.fornavn : null,
+    middleName: person ? person.navn.mellomnavn || null : null,
+    lastName: person ? person.navn.etternavn : null,
+    fullName: person ? person.navn.fornavn + ' ' + person.navn.etternavn : null,
+    personalIdNumber: person ? person.fodselsnummer.identifikatorverdi : null,
+    mobilePhone: elev ? elev.kontaktinformasjon.mobiltelefonnummer || null : null,
+    mail: elev ? elev.kontaktinformasjon.epostadresse || null : null,
+    userName: elev ? elev.brukernavn.identifikatorverdi || null : null
   }
 )
+
+exports.elev = elev => {
+  const personUrlList = elev ? elev._links.person[0].href.split('/') : false
+  return {
+    systemId: elev ? elev.systemId.identifikatorverdi || null : null,
+    mobilePhone: elev ? elev.kontaktinformasjon.mobiltelefonnummer || null : null,
+    mail: elev ? elev.kontaktinformasjon.epostadresse || null : null,
+    userName: elev ? elev.brukernavn.identifikatorverdi || null : null,
+    personalIdNumber: personUrlList ? personUrlList.pop() : null
+
+  }
+}
 
 exports.teacher = (personalressurs, person, skole) => (
   [

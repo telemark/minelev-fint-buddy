@@ -190,6 +190,30 @@ Returns all teachers
 ]
 ```
 
+### Example results from ```/students/all```
+
+Returns all students
+
+```JavaScript
+[
+  {
+    "systemId": "726FFDA0B73B121DE0531833800A007B",
+    "mobilePhone": "+4748300000",
+    "mail": null,
+    "userName": "0903grim"
+    "personalIdNumber": "02059711111",
+  },
+  {
+    "systemId": "726EF07244A70738E0531833800AA8CE",
+    "mobilePhone": "+4748300000",
+    "mail": "halgrim.durk@hotmail.com",
+    "userName": "1010halg"
+    "personalIdNumber": "02059711112",
+  }
+ ]
+```
+
+
 ## Related
 
 - [buddy-minelev-api](https://github.com/telemark/buddy-minelev-api) The original MinElev Buddy API

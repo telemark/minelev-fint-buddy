@@ -27,10 +27,11 @@ router.use(handleUnauthorized)
 router.get('/', routes.frontpage)
 router.get('/users/:username/search/:query', routes.search)
 router.get('/users/:username/students/:id', routes.student)
-router.get('/groups/:groupId/students', routes.students)
+router.get('/groups/:groupId/students', routes.studentsInGroup)
 router.get('/users/:username/contactClasses', routes.contactClasses)
 router.get('/users/:username/contactTeachers', routes.contactTeachers)
 router.get('/teachers/all', routes.teachers)
+router.get('/students/all', routes.students)
 
 module.exports = (request, response) => {
   router(request, response, finalhandler(request, response))

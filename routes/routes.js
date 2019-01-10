@@ -59,7 +59,7 @@ exports.student = async (request, response) => {
   }
 }
 
-exports.students = async (request, response) => {
+exports.studentsInGroup = async (request, response) => {
   const { groupId } = request.params
   logger('info', ['routes', 'students', 'groupId', groupId])
 
@@ -76,6 +76,18 @@ exports.students = async (request, response) => {
 
     const students = await Promise.all(promises)
     send(response, 200, students)
+  } catch (error) {
+    sendError(request, response, error)
+  }
+}
+
+exports.students = async (request, response) => {
+  logger('info', ['routes', 'students'])
+
+  try {
+    const fintInstance = await fint(skoleOptions)
+    const students = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/')
+    send(response, 200, students.map(dataMapper.elev))
   } catch (error) {
     sendError(request, response, error)
   }
