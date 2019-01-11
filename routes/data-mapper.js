@@ -60,17 +60,17 @@ exports.elev = elev => {
 exports.teacher = (personalressurs, person, skole) => (
   [
     {
-      firstName: person.navn.fornavn,
-      middleName: person.navn.mellomnavn || null,
-      lastName: person.navn.etternavn,
-      fullName: person.navn.fornavn + ' ' + person.navn.etternavn,
-      username: personalressurs.brukernavn.identifikatorverdi,
-      personalIdNumber: person.fodselsnummer.identifikatorverdi,
-      mobilePhone: personalressurs.kontaktinformasjon.mobiltelefonnummer || null,
-      mail: personalressurs.kontaktinformasjon.epostadresse || null,
-      privateMail: person.kontaktinformasjon.epostadresse || null,
+      firstName: person ? person.navn.fornavn : null,
+      middleName: person ? person.navn.mellomnavn || null : null,
+      lastName: person ? person.navn.etternavn : null,
+      fullName: person ? person.navn.fornavn + ' ' + person.navn.etternavn : null,
+      username: personalressurs ? personalressurs.brukernavn.identifikatorverdi : null,
+      personalIdNumber: person ? person.fodselsnummer.identifikatorverdi : null,
+      mobilePhone: personalressurs ? personalressurs.kontaktinformasjon.mobiltelefonnummer || null : null,
+      mail: personalressurs ? personalressurs.kontaktinformasjon.epostadresse || null : null,
+      privateMail: person ? person.kontaktinformasjon.epostadresse || null : null,
       department: '-----------', // is this the school?
-      organizationNumber: skole.organisasjonsnummer.identifikatorverdi
+      organizationNumber: skole ? skole.organisasjonsnummer.identifikatorverdi : null
     }
   ]
 )
