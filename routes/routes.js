@@ -81,18 +81,6 @@ exports.studentsInGroup = async (request, response) => {
   }
 }
 
-exports.students = async (request, response) => {
-  logger('info', ['routes', 'students'])
-
-  try {
-    const fintInstance = await fint(skoleOptions)
-    const students = await fintInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/')
-    send(response, 200, students.map(dataMapper.elev))
-  } catch (error) {
-    sendError(request, response, error)
-  }
-}
-
 exports.contactClasses = async (request, response) => {
   const { username } = request.params
   logger('info', ['routes', 'contactClasses', 'username', username])
@@ -111,37 +99,6 @@ exports.contactClasses = async (request, response) => {
 
     const contactGroups = await Promise.all(promises)
     send(response, 200, contactGroups)
-  } catch (error) {
-    sendError(request, response, error)
-  }
-}
-
-exports.contactTeachers = async (request, response) => {
-  const { username } = request.params
-  logger('info', ['routes', 'contactTeachers', 'username', username])
-  try {
-    const fintPersonalInstance = await fint(personalOptions)
-    const fintSkoleInstance = await fint(skoleOptions)
-
-    const elev = await fintSkoleInstance.getData('https://beta.felleskomponent.no/utdanning/elev/elev/brukernavn/' + username)
-    const elevforhold = await fintSkoleInstance.getData(dataMapper.elevforholdUrl(elev))
-
-    const promises = dataMapper.contactGroupsUrls(elevforhold).map(async contactGroupUrl => {
-      const contactGroup = await fintSkoleInstance.getData(contactGroupUrl)
-
-      const nestedPromises = dataMapper.undervisningsforholdUrls(contactGroup).map(async undervisningsforholdUrl => {
-        const undervisningsforhold = await fintSkoleInstance.getData(undervisningsforholdUrl)
-        const skoleressurs = await fintSkoleInstance.getData(dataMapper.skoleressursUrl(undervisningsforhold))
-        const personalressurs = await fintPersonalInstance.getData(dataMapper.personalressursUrl(skoleressurs)) // returns 404
-
-        return dataMapper.contactTeacher(personalressurs, contactGroup)
-      })
-
-      const contactTeachers = await Promise.all(nestedPromises)
-      return contactTeachers
-    })
-    const contactTeachers = await Promise.all(promises)
-    send(response, 200, contactTeachers)
   } catch (error) {
     sendError(request, response, error)
   }

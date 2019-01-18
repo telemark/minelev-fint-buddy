@@ -114,6 +114,8 @@ exports.elevforholdUrl = elev => elev._links.elevforhold[0].href
 
 exports.elevUrl = elevforhold => elevforhold._links.elev[0].href
 
+exports.elevPersonUrl = elevforhold => elevforhold._links.person[0].href
+
 exports.skoleUrl = elevforhold => elevforhold._links.skole[0].href
 
 exports.memberUrls = group => {

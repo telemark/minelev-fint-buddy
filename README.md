@@ -183,11 +183,28 @@ Returns all teachers
     "personalIdNumber": "01016145048",
     "mobilePhone": null,
     "mail": "Testine.Testen@t-fk.no",
-    "privateMail": "Geir.Gasodden@t-fk.no",
+    "privateMail": "influencer@fake.no",
     "department": "SKIVS",
     "organizationNumber": "974568039"
   }
 ]
+```
+
+### Example results from ```/students/:id```
+
+Returns a given student
+
+```JavaScript
+  {
+    firstName: "Helge",
+    middleName: null,
+    lastName: "Grim",
+    fullName: "Helge Grim",
+    personalIdNumber: "02059711111",
+    mobilePhone: "4748300000",
+    mail: "helgeg@hotmail.com",
+    userName: "0903grim"
+  }
 ```
 
 ### Example results from ```/students/all```

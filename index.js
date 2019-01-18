@@ -6,6 +6,7 @@ const jwt = require('express-jwt')
 
 // Utilities
 const routes = require('./routes/routes')
+const students = require('./routes/students')
 const handleUnauthorized = require('./lib/handle-unauthorized')
 const cacheProvider = require('./lib/cache-provider')
 
@@ -29,9 +30,11 @@ router.get('/users/:username/search/:query', routes.search)
 router.get('/users/:username/students/:id', routes.student)
 router.get('/groups/:groupId/students', routes.studentsInGroup)
 router.get('/users/:username/contactClasses', routes.contactClasses)
-router.get('/users/:username/contactTeachers', routes.contactTeachers)
+router.get('/users/:username/contactTeachers', students.contactTeachers)
+router.get('/students/:username/contactTeachers', students.contactTeachers)
 router.get('/teachers/all', routes.teachers)
-router.get('/students/all', routes.students)
+router.get('/students/:id', students.student)
+router.get('/students/all', students.students)
 
 module.exports = (request, response) => {
   router(request, response, finalhandler(request, response))
