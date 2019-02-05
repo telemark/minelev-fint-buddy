@@ -101,7 +101,7 @@ exports.students = async (request, response) => {
   }
 }
 
-/* 
+/*
  Returns contact teachers for a student
 */
 
